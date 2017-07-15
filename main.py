@@ -1,5 +1,6 @@
 from tkinter import *
 
+color = 'black'
 canvas_width = 500
 canvas_height = 500
 
@@ -8,8 +9,17 @@ class DrawCanvas(Canvas):
 	def __init__(self, tkmaster, **kw):
 		super().__init__(tkmaster, **kw)
 		self.grid(row=0, column=0, padx=10, pady=10)
-		self.bind("<B1-Motion>", self.paint)
-		self.config(highlightbackground="black")
+		self.bind('<B1-Motion>', self.line_paint)
+		self.config(highlightbackground='black')
+		self.lines = []
+		self.init()
+
+	def init(self, clear=True):
+		global color
+		if clear:
+			self.lines = []
+		for x in range(4):
+			self.lines.append([self.create_line(0, 0, 0, 0, width=2, fill=color)])
 
 	def paint(self, event):
 		global canvas_height, canvas_width
@@ -21,12 +31,26 @@ class DrawCanvas(Canvas):
 		self.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
 		self.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
 
+	def line_paint(self, event):
+		global canvas_height, canvas_width
+		x, y = event.x, event.y
+		dx = canvas_width - x
+		dy = canvas_height - y
+		self.lines[-4] += x, y, (x + 1), (y + 1)
+		self.lines[-3] += dx, y, (dx + 1), (y + 1)
+		self.lines[-2] += x, dy, (x + 1), (dy + 1)
+		self.lines[-1] += dx, dy, (dx + 1), (dy + 1)
+		for i in range(-4, 0):
+			self.coords(self.lines[i][0], *self.lines[i][1:])
+
 	def clear(self):
-		self.delete("all")
+		self.delete(ALL)
+		self.init()
+		print(self.lines)
 
 
 class ColorFrame:
-	colors = ["black", "white", "red", "green", "blue", "yellow"]
+	colors = ['black', 'white', 'red', 'green', 'blue', 'yellow']
 
 	def __init__(self, tkmaster):
 		self.frame = Frame(tkmaster)
@@ -39,27 +63,26 @@ class ColorFrame:
 class Color:
 	def __init__(self, tkmaster, bcolor, row):
 		self.color = bcolor
-		self.button = Button(tkmaster, text="      ", command=self.changecolor)
+		self.button = Button(tkmaster, text=8 * ' ', command=self.changecolor)
 		self.button.config(background=bcolor)
 		self.button.grid(row=row, column=0)
 
 	def changecolor(self):
-		global color
+		global color, canvas
 		color = self.color
+		canvas.init(False)
 
-
-color = "black"
 
 master = Tk()
-master.title("lets draw something")
+master.title('lets draw something')
 
 canvas = DrawCanvas(master, width=canvas_width, height=canvas_height)
 
 colorframe = ColorFrame(master)
 
-message = Label(master, text="press and drag the mouse to draw")
+message = Label(master, text='press and drag the mouse to draw')
 message.grid(row=1, column=0)
 
-delete = Button(master, text="Delete", command=canvas.clear)
+delete = Button(master, text="delete", command=canvas.clear)
 delete.grid(row=1, column=1)
 mainloop()
