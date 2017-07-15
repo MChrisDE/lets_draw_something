@@ -1,7 +1,7 @@
 from tkinter import *
 
-canvas_width = 250
-canvas_height = 250
+canvas_width = 500
+canvas_height = 500
 
 
 class Screen:
@@ -10,13 +10,6 @@ class Screen:
         self.canvas.grid(row=0, column=0, padx=10, pady=10)
         self.canvas.bind("<B1-Motion>", paint)
         self.canvas.config(highlightbackground="black")
-        self.counter = 0
-
-    def draw(self, x, y):
-        global color
-        self.counter += 1
-        print(self.counter)
-        self.canvas.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
 
 
 class ColorFrame:
@@ -39,19 +32,17 @@ class Color:
     def changecolor(self):
         global color
         color = self.color
-        print(color)
 
 
 def paint(event):
-    # fixme: less often called when there are more objects
+    global canvas, canvas_height, canvas_width
     x, y = event.x, event.y
-    canvas.draw(x, y)
-    dx = 250 - x
-    dy = 250 - y
-    canvas.draw(x, y)
-    canvas.draw(dx, y)
-    canvas.draw(x, dy)
-    canvas.draw(dx, dy)
+    dx = canvas_width - x
+    dy = canvas_height - y
+    canvas.canvas.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
+    canvas.canvas.create_rectangle(dx, y, (dx + 1), (y + 1), outline=color)
+    canvas.canvas.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
+    canvas.canvas.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
 
 
 def deleteall():
