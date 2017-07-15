@@ -8,8 +8,21 @@ class DrawCanvas(Canvas):
 	def __init__(self, tkmaster, **kw):
 		super().__init__(tkmaster, **kw)
 		self.grid(row=0, column=0, padx=10, pady=10)
-		self.bind("<B1-Motion>", paint)
+		self.bind("<B1-Motion>", self.paint)
 		self.config(highlightbackground="black")
+
+	def paint(self, event):
+		global canvas_height, canvas_width
+		x, y = event.x, event.y
+		dx = canvas_width - x
+		dy = canvas_height - y
+		self.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
+		self.create_rectangle(dx, y, (dx + 1), (y + 1), outline=color)
+		self.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
+		self.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
+
+	def clear(self):
+		self.delete("all")
 
 
 class ColorFrame:
@@ -34,21 +47,6 @@ class Color:
 		color = self.color
 
 
-def paint(event):
-	global canvas, canvas_height, canvas_width
-	x, y = event.x, event.y
-	dx = canvas_width - x
-	dy = canvas_height - y
-	canvas.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
-	canvas.create_rectangle(dx, y, (dx + 1), (y + 1), outline=color)
-	canvas.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
-	canvas.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
-
-
-def deleteall():
-	canvas.delete("all")
-
-
 color = "black"
 
 master = Tk()
@@ -61,6 +59,6 @@ colorframe = ColorFrame(master)
 message = Label(master, text="press and drag the mouse to draw")
 message.grid(row=1, column=0)
 
-delete = Button(master, text="Delete", command=deleteall)
+delete = Button(master, text="Delete", command=canvas.clear)
 delete.grid(row=1, column=1)
 mainloop()
