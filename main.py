@@ -26,10 +26,11 @@ class DrawCanvas(Canvas):
 
 
 class ColorFrame:
+	colors = ["black", "white", "red", "green", "blue", "yellow"]
+
 	def __init__(self, tkmaster):
 		self.frame = Frame(tkmaster)
 		self.frame.grid(row=0, column=1)
-		self.colors = ["black", "white", "red", "green", "blue", "yellow"]
 		buttons = []
 		for i in range(0, len(self.colors)):
 			buttons.append(Color(self.frame, self.colors[i], i))
