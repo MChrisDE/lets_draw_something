@@ -14,11 +14,11 @@ class DrawCanvas(Canvas):
 		self.lines = []
 		self.init()
 
-	def init(self, clear=True):
+	def init(self, clear=True):  # create the lines, 'clear' resets the current lines
 		global color
 		if clear:
 			self.lines = []
-		for x in range(4):
+		for x in range(4):  # save the canvas 'id' in [0]
 			self.lines.append([self.create_line(0, 0, 0, 0, width=2, fill=color)])
 
 	def paint(self, event):
@@ -36,17 +36,16 @@ class DrawCanvas(Canvas):
 		x, y = event.x, event.y
 		dx = canvas_width - x
 		dy = canvas_height - y
-		self.lines[-4] += x, y, (x + 1), (y + 1)
-		self.lines[-3] += dx, y, (dx + 1), (y + 1)
-		self.lines[-2] += x, dy, (x + 1), (dy + 1)
-		self.lines[-1] += dx, dy, (dx + 1), (dy + 1)
-		for i in range(-4, 0):
+		self.lines[-4] += x, y, (x + 1), (y + 1)  # access the list
+		self.lines[-3] += dx, y, (dx + 1), (y + 1)  # elements from behind
+		self.lines[-2] += x, dy, (x + 1), (dy + 1)  # to make changing the
+		self.lines[-1] += dx, dy, (dx + 1), (dy + 1)  # line color possible
+		for i in range(-4, 0):  # change the path of the last 4 lines
 			self.coords(self.lines[i][0], *self.lines[i][1:])
 
-	def clear(self):
+	def clear(self):  # reset the canvas
 		self.delete(ALL)
 		self.init()
-		print(self.lines)
 
 
 class ColorFrame:
@@ -56,21 +55,21 @@ class ColorFrame:
 		self.frame = Frame(tkmaster)
 		self.frame.grid(row=0, column=1)
 		buttons = []
-		for i in range(0, len(self.colors)):
+		for i in range(len(self.colors)):
 			buttons.append(Color(self.frame, self.colors[i], i))
 
 
 class Color:
 	def __init__(self, tkmaster, bcolor, row):
 		self.color = bcolor
-		self.button = Button(tkmaster, text=8 * ' ', command=self.changecolor)
+		self.button = Button(tkmaster, text=8 * ' ', command=self.change_color)
 		self.button.config(background=bcolor)
 		self.button.grid(row=row, column=0)
 
-	def changecolor(self):
+	def change_color(self):
 		global color, canvas
 		color = self.color
-		canvas.init(False)
+		canvas.init(False)  # we don't want to reset the lines, passing 'False' will only create new lines
 
 
 master = Tk()
