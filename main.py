@@ -12,6 +12,7 @@ class DrawCanvas(Canvas):
 		super().__init__(tkmaster, **kw)
 		self.grid(row=0, column=0, padx=10, pady=10)
 		self.bind('<B1-Motion>', self.line_paint)
+		self.bind('<ButtonRelease-1>', lambda event: self.init(False))
 		self.config(highlightbackground='black')
 		self.lines = []
 		self.init()
