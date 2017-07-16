@@ -1,4 +1,6 @@
+import os
 from tkinter import *
+from PIL import ImageGrab
 
 color = 'black'
 canvas_width = 500
@@ -47,6 +49,14 @@ class DrawCanvas(Canvas):
 		self.delete(ALL)
 		self.init()
 
+	def save(self, **kwargs):
+		kwargs['path'] = kwargs.get('path', os.path.join(os.environ['USERPROFILE'], r'Desktop\\drawing.jpg'))
+		x = self.master.winfo_rootx() + self.winfo_x()
+		y = self.master.winfo_rooty() + self.winfo_y()
+		x1 = x + self.winfo_width()
+		y1 = y + self.winfo_height()
+		ImageGrab.grab().crop((x, y, x1, y1)).save(kwargs['path'])
+
 
 class ColorFrame:
 	colors = ['black', 'white', 'red', 'green', 'blue', 'yellow']
@@ -82,6 +92,9 @@ colorframe = ColorFrame(master)
 message = Label(master, text='press and drag the mouse to draw')
 message.grid(row=1, column=0)
 
-delete = Button(master, text="delete", command=canvas.clear)
+delete = Button(master, text='delete', command=canvas.clear)
 delete.grid(row=1, column=1)
+
+save = Button(master, text='save', command=canvas.save)
+save.grid(row=1, column=2)
 mainloop()
