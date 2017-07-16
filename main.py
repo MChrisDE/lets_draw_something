@@ -59,23 +59,23 @@ class DrawCanvas(Canvas):
 		ImageGrab.grab().crop((x, y, x1, y1)).save(kwargs['path'])
 
 
-class ColorFrame:
+class ColorFrame(Frame):
 	colors = ['black', 'white', 'red', 'green', 'blue', 'yellow']
 
-	def __init__(self, tkmaster):
-		self.frame = Frame(tkmaster)
-		self.frame.grid(row=0, column=1)
-		buttons = []
+	def __init__(self, tkmaster, **kw):
+		super().__init__(tkmaster, **kw)
+		self.grid(row=0, column=1)
+		self.buttons = []
 		for i in range(len(self.colors)):
-			buttons.append(Color(self.frame, self.colors[i], i))
+			self.buttons.append(ColorButton(self, self.colors[i], i))
 
 
-class Color:
-	def __init__(self, tkmaster, bcolor, row):
+class ColorButton(Button):
+	def __init__(self, tkmaster, bcolor, row, **kw):
+		super().__init__(tkmaster, text=8 * ' ', command=self.change_color, **kw)
 		self.color = bcolor
-		self.button = Button(tkmaster, text=8 * ' ', command=self.change_color)
-		self.button.config(background=bcolor)
-		self.button.grid(row=row, column=0)
+		self.config(background=bcolor)
+		self.grid(row=row, column=0)
 
 	def change_color(self):
 		global color, canvas
