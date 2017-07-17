@@ -8,79 +8,79 @@ canvas_height = 500
 
 
 class DrawCanvas(Canvas):
-	def __init__(self, tkmaster, **kw):
-		super().__init__(tkmaster, **kw)
-		self.grid(row=0, column=0, padx=10, pady=10)
-		self.bind('<B1-Motion>', self.line_paint)
-		self.bind('<ButtonRelease-1>', lambda event: self.init(False))
-		self.config(highlightbackground='black')
-		self.lines = []
-		self.init()
+    def __init__(self, tkmaster, **kw):
+        super().__init__(tkmaster, **kw)
+        self.grid(row=0, column=0, padx=10, pady=10)
+        self.bind('<B1-Motion>', self.line_paint)
+        self.bind('<ButtonRelease-1>', lambda event: self.init(False))
+        self.config(highlightbackground='black')
+        self.lines = []
+        self.init()
 
-	def init(self, clear=True):  # create the lines, 'clear' resets the current lines
-		global color
-		if clear:
-			self.lines = []
-		for x in range(4):  # save the canvas 'id' in [0]
-			self.lines.append([self.create_line(0, 0, 0, 0, width=2, fill=color)])
+    def init(self, clear=True):  # create the lines, 'clear' resets the current lines
+        global color
+        if clear:
+            self.lines = []
+        for x in range(4):  # save the canvas 'id' in [0]
+            self.lines.append([self.create_line(0, 0, 0, 0, width=2, fill=color)])
 
-	def paint(self, event):
-		global canvas_height, canvas_width
-		x, y = event.x, event.y
-		dx = canvas_width - x
-		dy = canvas_height - y
-		self.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
-		self.create_rectangle(dx, y, (dx + 1), (y + 1), outline=color)
-		self.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
-		self.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
+    def paint(self, event):
+        global canvas_height, canvas_width
+        x, y = event.x, event.y
+        dx = canvas_width - x
+        dy = canvas_height - y
+        self.create_rectangle(x, y, (x + 1), (y + 1), outline=color)
+        self.create_rectangle(dx, y, (dx + 1), (y + 1), outline=color)
+        self.create_rectangle(x, dy, (x + 1), (dy + 1), outline=color)
+        self.create_rectangle(dx, dy, (dx + 1), (dy + 1), outline=color)
 
-	def line_paint(self, event):
-		global canvas_height, canvas_width
-		x, y = event.x, event.y
-		dx = canvas_width - x
-		dy = canvas_height - y
-		self.lines[-4] += x, y, (x + 1), (y + 1)  # access the list
-		self.lines[-3] += dx, y, (dx + 1), (y + 1)  # elements from behind
-		self.lines[-2] += x, dy, (x + 1), (dy + 1)  # to make changing the
-		self.lines[-1] += dx, dy, (dx + 1), (dy + 1)  # line color possible
-		for i in range(-4, 0):  # change the path of the last 4 lines
-			self.coords(self.lines[i][0], *self.lines[i][1:])
+    def line_paint(self, event):
+        global canvas_height, canvas_width
+        x, y = event.x, event.y
+        dx = canvas_width - x
+        dy = canvas_height - y
+        self.lines[-4] += x, y, (x + 1), (y + 1)  # access the list
+        self.lines[-3] += dx, y, (dx + 1), (y + 1)  # elements from behind
+        self.lines[-2] += x, dy, (x + 1), (dy + 1)  # to make changing the
+        self.lines[-1] += dx, dy, (dx + 1), (dy + 1)  # line color possible
+        for i in range(-4, 0):  # change the path of the last 4 lines
+            self.coords(self.lines[i][0], *self.lines[i][1:])
 
-	def clear(self):  # reset the canvas
-		self.delete(ALL)
-		self.init()
+    def clear(self):  # reset the canvas
+        self.delete(ALL)
+        self.init()
 
-	def save(self, **kwargs):
-		kwargs['path'] = kwargs.get('path', os.path.join(os.environ['USERPROFILE'], r'Desktop\\drawing.jpg'))
-		x = self.master.winfo_rootx() + self.winfo_x()
-		y = self.master.winfo_rooty() + self.winfo_y()
-		x1 = x + self.winfo_width()
-		y1 = y + self.winfo_height()
-		ImageGrab.grab().crop((x, y, x1, y1)).save(kwargs['path'])
+    def save(self, **kwargs):
+        kwargs['path'] = kwargs.get('path', os.path.join(os.environ['USERPROFILE'], r'Desktop\\drawing.jpg'))
+        x = self.master.winfo_rootx() + self.winfo_x()
+        y = self.master.winfo_rooty() + self.winfo_y()
+        x1 = x + self.winfo_width()
+        y1 = y + self.winfo_height()
+        ImageGrab.grab().crop((x, y, x1, y1)).save(kwargs['path'])
 
 
 class ColorFrame(Frame):
-	colors = ['black', 'white', 'red', 'green', 'blue', 'yellow']
+    colors = ['black', 'white', 'red', 'green', 'blue', 'yellow']
 
-	def __init__(self, tkmaster, **kw):
-		super().__init__(tkmaster, **kw)
-		self.grid(row=0, column=1)
-		self.buttons = []
-		for i in range(len(self.colors)):
-			self.buttons.append(ColorButton(self, self.colors[i], i))
+    def __init__(self, tkmaster, **kw):
+        super().__init__(tkmaster, **kw)
+        self.grid(row=0, column=1)
+        self.buttons = []
+        for i in range(len(self.colors)):
+            self.buttons.append(ColorButton(self, self.colors[i], i))
 
 
 class ColorButton(Button):
-	def __init__(self, tkmaster, bcolor, row, **kw):
-		super().__init__(tkmaster, text=8 * ' ', command=self.change_color, **kw)
-		self.color = bcolor
-		self.config(background=bcolor)
-		self.grid(row=row, column=0)
+    def __init__(self, tkmaster, bcolor, row, **kw):
+        super().__init__(tkmaster, text=8 * ' ', command=self.change_color, **kw)
+        self.color = bcolor
+        self.config(background=bcolor)
+        self.grid(row=row, column=0)
 
-	def change_color(self):
-		global color, canvas
-		color = self.color
-		canvas.init(False)  # we don't want to reset the lines, passing 'False' will only create new lines
+    def change_color(self):
+        global color, canvas
+        color = self.color
+        canvas.init(False)  # we don't want to reset the lines, passing 'False' will only create new lines
 
 
 master = Tk()
